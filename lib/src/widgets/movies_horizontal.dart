@@ -28,7 +28,8 @@ class MovieHorizontal extends StatelessWidget {
           //.builder Renderiza  bajo demanda cuando son necesarios
           pageSnapping: false, //No Snapping
           controller: _pageController,
-          itemCount: peliculas.length, //Para que renderice todo el ItemBuilder, si no peta
+          itemCount: peliculas
+              .length, //Para que renderice todo el ItemBuilder, si no peta
           itemBuilder: (contexts, index) => _tarjeta(context, peliculas[index]),
         )
         //children: _tarjetas(context),
@@ -36,18 +37,21 @@ class MovieHorizontal extends StatelessWidget {
   }
 
   Widget _tarjeta(BuildContext context, Pelicula pelicula) {
-
+    pelicula.uniqueIDHero = '${pelicula.id}-small';
     final tarjeta = Container(
       margin: EdgeInsets.only(right: 15.0),
       child: Column(
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: FadeInImage(
-              image: NetworkImage(pelicula.getPostedImg()),
-              placeholder: AssetImage('assets/img/no-image.jpg'),
-              fit: BoxFit.cover,
-              height: 160.0,
+          Hero(
+            tag: pelicula.uniqueIDHero,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: FadeInImage(
+                image: NetworkImage(pelicula.getPostedImg()),
+                placeholder: AssetImage('assets/img/no-image.jpg'),
+                fit: BoxFit.cover,
+                height: 160.0,
+              ),
             ),
           ),
           SizedBox(height: 5.0),
@@ -62,8 +66,9 @@ class MovieHorizontal extends StatelessWidget {
 
     return GestureDetector(
       child: tarjeta,
-
-      onTap: (){Navigator.pushNamed(context, 'detalle',arguments: pelicula);},
+      onTap: () {
+        Navigator.pushNamed(context, 'detalle', arguments: pelicula);
+      },
     );
   }
 

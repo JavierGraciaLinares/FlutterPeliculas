@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_peliculas/src/models/actores_model.dart';
 import 'package:flutter_peliculas/src/models/pelicula_model.dart';
+import 'package:flutter_peliculas/src/providers/peliculas_provider.dart';
+import 'package:flutter_peliculas/src/providers/peliculas_provider.dart'
+    as prefix0;
 
 class PeliculaDetalle extends StatelessWidget {
   @override
@@ -20,8 +24,7 @@ class PeliculaDetalle extends StatelessWidget {
             ),
             _posterTitulo(pelicula, context),
             _descripcion(pelicula),
-            _descripcion(pelicula),
-            _descripcion(pelicula)
+            _crearActores(pelicula)
           ]),
         )
       ],
@@ -55,11 +58,14 @@ class PeliculaDetalle extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: Row(
           children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Image(
-                image: NetworkImage(pelicula.getPostedImg()),
-                height: 150.0,
+            Hero(
+              tag: pelicula.uniqueIDHero,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Image(
+                  image: NetworkImage(pelicula.getPostedImg()),
+                  height: 150.0,
+                ),
               ),
             ),
             SizedBox(
@@ -94,8 +100,56 @@ class PeliculaDetalle extends StatelessWidget {
   Widget _descripcion(Pelicula pelicula) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-      child: Text(pelicula.overview,
-      textAlign: TextAlign.justify,),
+      child: Text(
+        pelicula.overview,
+        textAlign: TextAlign.justify,
+      ),
+    );
+  }
+
+  Widget _crearActores(Pelicula pelicula) {
+    final peliculasProvider = new prefix0.PeliculasProvider();
+
+    return FutureBuilder(
+      future: peliculasProvider.getActores(pelicula.id.toString()),
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        if (snapshot.hasData) {
+          return _crearActoresPageView(snapshot.data);
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Widget _crearActoresPageView(List<Actor> actores) {
+    return SizedBox(
+      height: 200.0,
+      child: PageView.builder(
+        pageSnapping: false,
+        controller: PageController(viewportFraction: 0.3, initialPage: 1),
+        itemCount: actores.length,
+        itemBuilder: (context, index) => _actorTarjeta(actores[index]),
+      ),
+    );
+  }
+
+  Widget _actorTarjeta(Actor actor) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: FadeInImage(
+              image: NetworkImage(actor.getFotoActor()),
+              placeholder: AssetImage('assets/img/no-image.jpg'),
+              height: 150.0,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Text(actor.name, overflow: TextOverflow.ellipsis)
+        ],
+      ),
     );
   }
 }
