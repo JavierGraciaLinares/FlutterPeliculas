@@ -4,7 +4,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 
 class CardSwipperWidget extends StatelessWidget {
   final List<Pelicula> lista;
-
+//test
   CardSwipperWidget({@required this.lista});
 
   @override
