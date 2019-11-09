@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_peliculas/src/providers/peliculas_provider.dart';
+import 'package:flutter_peliculas/src/search/search_delegate.dart';
 import 'package:flutter_peliculas/src/widgets/card_swiper_widget.dart';
 import 'package:flutter_peliculas/src/widgets/movies_horizontal.dart';
 
@@ -8,7 +9,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    peliculasProvider.getPeliculasPopulares();//Para cargar los 1os datos en StreamBuilder
+    peliculasProvider
+        .getPeliculasPopulares(); //Para cargar los 1os datos en StreamBuilder
 
     return Scaffold(
         appBar: AppBar(
@@ -20,7 +22,13 @@ class HomePage extends StatelessWidget {
               icon: Icon(
                 Icons.search,
               ),
-              onPressed: () {},
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: DataSearch(),
+                  //query: "Buscar", //Texto Precargado en la busqueda
+                );
+              },
             )
           ],
         ),
@@ -70,7 +78,8 @@ class HomePage extends StatelessWidget {
                   //return CardSwipperWidget(lista: snapshot.data);
                   return MovieHorizontal(
                     peliculas: snapshot.data,
-                    siguientePagina: peliculasProvider.getPeliculasPopulares, //Sin paréntesis getPeliculasPopulares() porque es la definiciaon de la misma
+                    siguientePagina: peliculasProvider
+                        .getPeliculasPopulares, //Sin paréntesis getPeliculasPopulares() porque es la definiciaon de la misma
                   );
                 } else {
                   return Center(child: CircularProgressIndicator());
